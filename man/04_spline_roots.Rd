@@ -1,4 +1,4 @@
-\name{rd_4_spline_roots}
+\name{04_spline_roots}
 \alias{chs.root}
 \alias{chs.argmin}
 \alias{chs.argmax}
@@ -27,8 +27,7 @@ chs.roots.derivative (f, include.implied.roots=TRUE, warning=TRUE,
     all.inflection.points=FALSE)
 }
 \details{
-Refer the first help page, on chs.tangents() and chs.slopes(), for background information.\cr
-Refer to chs.bilinearize(), for suggestions, on how to make splines more quadratic-like.
+Refer the first help page, on chs.tangents() and chs.slopes(), for background information.
 
 These functions compute roots of cubic Hermite splines (with function objects). Alternatively, you can you can use the other spline root functions (with a .eval suffix, and without function objects), which may be more efficient, in some cases.
 
@@ -79,4 +78,4 @@ f = chs (cx, cy)
 chs.roots (f)
 chs.argmins (f)
 }
-\seealso{\link{chs.tangents}, \link{chs.slopes}, \link{chs.bilinearize}, \link{chs.root.eval}, \link{chs.argmin.eval}, \link{chs.argmax.eval}, \link{chs.argflex.eval}, \link{chs.roots.eval}, \link{chs.argmins.eval}, \link{chs.argmaxs.eval}, \link{chs.argflexs.eval}, \link{chs.roots.derivative.eval}}
+\seealso{\link{chs.tangents}, \link{chs.slopes}, \link{chs.root.eval}, \link{chs.argmin.eval}, \link{chs.argmax.eval}, \link{chs.argflex.eval}, \link{chs.roots.eval}, \link{chs.argmins.eval}, \link{chs.argmaxs.eval}, \link{chs.argflexs.eval}, \link{chs.roots.derivative.eval}}

@@ -1,4 +1,4 @@
-\name{rd_8_spline_root_evaluation}
+\name{07_spline_root_evaluation}
 \alias{chs.root.eval}
 \alias{chs.argmin.eval}
 \alias{chs.argmax.eval}
@@ -57,4 +57,4 @@ cb = chs.slopes (cx, cy)
 chs.roots.eval (nc, cx, cy, cb)
 chs.argmins.eval (nc, cx, cy, cb)
 }
-\seealso{\link{chs.tangents}, \link{chs.slopes}, \link{chs.root}, \link{chs.argmin}, \link{chs.argmax}, \link{chs.argflex}, \link{chs.roots}, \link{chs.argmins}, \link{chs.argmaxs}, \link{chs.argflexs}, \link{chs.roots.derivative}, \link{chs.bilinearize}}
+\seealso{\link{chs.tangents}, \link{chs.slopes}, \link{chs.root}, \link{chs.argmin}, \link{chs.argmax}, \link{chs.argflex}, \link{chs.roots}, \link{chs.argmins}, \link{chs.argmaxs}, \link{chs.argflexs}, \link{chs.roots.derivative}}

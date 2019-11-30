@@ -1,4 +1,4 @@
-\name{rd_3_print_and_plot_methods}
+\name{03_print_and_plot_methods}
 \alias{print.k.spline}
 \alias{plot.k.spline}
 \alias{lines.k.spline}

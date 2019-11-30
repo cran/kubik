@@ -150,7 +150,5 @@
 	{	I = (i - 1):(i + 1)
 		p [i,] = .quad.params (cx [I], cy [I])
 	}
-	p [1,] = p [2,]
-	p [nc,] = p [nc - 1,]
 	p
 }

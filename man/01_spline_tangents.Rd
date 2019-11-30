@@ -1,4 +1,4 @@
-\name{rd_1_spline_tangents}
+\name{01_spline_tangents}
 \alias{chs.tangents}
 \alias{chs.slopes}
 \title{Spline Tangents}
@@ -23,15 +23,14 @@ Each spline segment has a pair of surrounding control points, and a pair of surr
 chs.tangents() computes a (possibly) suitable matrix of tangents, and chs.slopes() computes a (possibly) suitable vector of slopes.
 
 If there's only one spline segment:\cr
-The surrounding control slopes are equal to the secant's slope.
+The initial surrounding control slopes are set equal to the secant's slope.
 
 And if there's two or more spline segments:\cr
-Each slope is computed by fitting a quadratic to three consecutive control points, and then computing the derivative of the quadratic. The derivative is evaluated at the second (i.e. mid) control point, with the exception of the first and last slopes.
+Each initial slope, except for the outermost slopes, is computed by fitting a quadratic to three consecutive control points, and then computing the derivative of the quadratic. The derivative is evaluated at the second (i.e. mid) control point. The outermost slopes are set equal to the secants' slopes.
 
 By default, a correction method is used, that prevents optima from appearing within each spline segment, except where either of the following applies:
 
-(1) The spline segment has a constant value (so, the sign of the secant's
-slope is zero) and the surrounding control slopes have opposite signs.\cr
+(1) The spline segment has a constant value (so, the sign of the secant's slope is zero) and the surrounding control slopes have opposite signs.\cr
 (2) The secant's slope has the opposite sign to either of the surrounding control slopes.
 
 Where the secant refers to the secant line between the surrounding control points.

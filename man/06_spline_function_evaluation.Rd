@@ -1,4 +1,4 @@
-\name{rd_7_spline_function_evaluation}
+\name{06_spline_function_evaluation}
 \alias{chs.eval}
 \alias{chs.derivative.eval}
 \alias{chs.integral.eval}

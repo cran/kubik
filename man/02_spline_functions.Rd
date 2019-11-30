@@ -1,4 +1,4 @@
-\name{rd_2_spline_functions}
+\name{02_spline_functions}
 \alias{chs}
 \alias{chs.derivative}
 \alias{chs.integral}

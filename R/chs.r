@@ -43,8 +43,10 @@
 	else
 	{	ps = .quads.params (nc, cx, cy)
 		cb = numeric (nc)
-		for (i in 1:nc)
+		for (i in 2:(nc - 1) )
 			cb [i] = ps [i, 2] + 2 * ps [i, 3] * cx [i]
+		cb [1] = sec [1]
+		cb [nc] = sec [nc - 1]
 		if (correction)
 			cb = .chs.slopes.ext (nc, sec, cb)
 	}
@@ -127,48 +129,4 @@ chs.tangents = function (cx, cy, correction=TRUE)
 chs.slopes = function (cx, cy, correction=TRUE)
 {	nc = .test.cps (cx, cy)
 	.chs.slopes (nc, cx, cy, correction)
-}
-
-chs.bilinearize = function (cx, cy, cb, correction=TRUE, at,
-	distance = factor * mean (diff (cx) ), factor=0.125)
-{	nc = .test.cps (cx, cy, cb)
-	at = sort (as.integer (at) )
-	nrep = length (at)
-	if (missing (cb) )
-		cb = .chs.slopes (nc, cx, cy, correction)
-	if (nrep == 0)
-		stop ("needs one or more at values")
-	if (any (diff (at) < 2) )
-		stop ("needs unique non-adjacent at values")
-	if (at [1] < 2 || at [nrep] > nc - 1)
-		stop ("at needs to be in interval [2, nc -1]")
-	if (any (distance <= 0) )
-		stop ("distance <= 0")
-	if (length (distance) == 1)
-		distance = rep (distance, nrep)
-	else if (nrep != length (distance) )
-		stop ("length (distance) needs to be 1 or length (at)")
-	nc2 = nc + nrep
-	k = at + (0:(nrep - 1) )
-	cx2 = cy2 = cb2 = rep (0, nc2)
-	cx2 [- c (k, k + 1)] = cx [-at]
-	cy2 [- c (k, k + 1)] = cy [-at]
-	cb2 [- c (k, k + 1)] = cb [-at]
-	for (i in 1:nrep)
-	{	I = at [i]
-		K1 = k [i]
-		K2 = K1 + 1
-
-		u1 = cx [I] - distance [i]
-		u2 = cx [I] + distance [i]
-		cx2 [K1] = u1
-		cx2 [K2] = u2
-		cy2 [K1] = cy [I - 1] + (u1 - cx [I - 1]) * cb [I - 1]
-		cy2 [K2] = cy [I + 1] - (cx [I + 1] - u2) * cb [I + 1]
-		cb2 [K1] = cb [I - 1]
-		cb2 [K2] = cb [I + 1]
-	}
-	if (any (diff (cx2) <= 0) )
-		stop ("\ndistance too large\n(needs unique ascending cx values, after replacement)")
-	list (cx=cx2, cy=cy2, cb=cb2)
 }

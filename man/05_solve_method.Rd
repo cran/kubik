@@ -1,4 +1,4 @@
-\name{rd_5_solve_method}
+\name{05_solve_method}
 \alias{solve.chs}
 \title{Solve Method}
 \description{Solve method, for chs objects.}
