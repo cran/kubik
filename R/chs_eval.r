@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines
-#Copyright (C), Abby Spurdle, 2019
+#kubik: Cubic Hermite Splines and Related Optimization Methods
+#Copyright (C), Abby Spurdle, 2020
 
 #This program is distributed without any warranty.
 
@@ -11,49 +11,49 @@
 #Also, this license should be available at:
 #https://cran.r-project.org/web/licenses/GPL-2
 
-.chs.eval = function (is.derivative, nc, cx, cy, cb, x, outside)
-{	nx = length (x)
+.chs.eval = function (is.derivative, cx, cy, cb, x, outside)
+{	nc = length (cx)
+	nx = length (x)
 	y = numeric (nx)
 	for (i in seq_len (nx) )
-	{	if (is.finite (x [i]) )
-		{	if (x [i] < cx [1])
-				y [i] = outside [1]
-			else if (x [i] > cx [nc])
-				y [i] = outside [2]
-			else
-			{	nI = sum (cx <= x [i])
-				if (is.derivative)
-				{	if (cx [nI] == x [i])
-						y [i] = cb [nI]
-					else
-						y [i] = .interval.derivative.eval (cx [nI], cx [nI + 1], cy [nI], cy [nI + 1], cb [nI], cb [nI + 1], x [i])
-				}
+	{	if (is.na (x [i]) )
+			y [i] = NA
+		else if (x [i] < cx [1])
+			y [i] = outside [1]
+		else if (x [i] > cx [nc])
+			y [i] = outside [2]
+		else
+		{	nI = sum (cx <= x [i])
+			if (is.derivative)
+			{	if (cx [nI] == x [i])
+					y [i] = cb [nI]
 				else
-				{	if (cx [nI] == x [i])
-						y [i] = cy [nI]
-					else
-						y [i] = .interval.eval (cx [nI], cx [nI + 1], cy [nI], cy [nI + 1], cb [nI], cb [nI + 1], x [i])
-				}
+					y [i] = .interval.derivative.eval (cx [nI], cx [nI + 1], cy [nI], cy [nI + 1], cb [nI], cb [nI + 1], x [i])
+			}
+			else
+			{	if (cx [nI] == x [i])
+					y [i] = cy [nI]
+				else
+					y [i] = .interval.eval (cx [nI], cx [nI + 1], cy [nI], cy [nI + 1], cb [nI], cb [nI + 1], x [i])
 			}
 		}
-		else if (is.infinite (x [i]) )
-			y [i] = x [i]
-		else
-			y [i] = NA
 	}
+	if (is.matrix (x) )
+		dim (y) = dim (x)
 	y
 }
 
-chs.eval = function (nc, cx, cy, cb, x, outside = c (NA, NA) )
-	.chs.eval (FALSE, nc, cx, cy, cb, x, outside)
+chs.eval = function (cx, cy, cb, x, ..., outside = c (NA, NA) )
+	.chs.eval (FALSE, cx, cy, cb, x, outside)
 
-chs.derivative.eval = function (nc, cx, cy, cb, x, outside = c (NA, NA) )
-	.chs.eval (TRUE, nc, cx, cy, cb, x, outside)
+chs.derivative.eval = function (cx, cy, cb, x, ..., outside = c (NA, NA) )
+	.chs.eval (TRUE, cx, cy, cb, x, outside)
 
-chs.integral.eval = function (nc, cx, cy, cb, x, outside = c (NA, NA), constant=0)
-{	nx = length (x)
+chs.integral.eval = function (cx, cy, cb, x, ..., outside = c (NA, NA), constant=0)
+{	nc = length (cx)
+	nx = length (x)
 	if (nx == 0)
-		numeric ()
+		y = numeric ()
 	else
 	{	areas = numeric (nc - 1)
 		for (i in 1:(nc - 1) )
@@ -61,7 +61,9 @@ chs.integral.eval = function (nc, cx, cy, cb, x, outside = c (NA, NA), constant=
 		
 		y = rep (0, nx)
 		for (i in 1:nx)
-		{	if (x [i] < cx [1])
+		{	if (is.na (x [i]) )
+				y [i] = NA
+			else if (x [i] < cx [1])
 				y [i] = outside [1]
 			else if (x [i] > cx [nc])
 				y [i] = outside [2]
@@ -74,6 +76,8 @@ chs.integral.eval = function (nc, cx, cy, cb, x, outside = c (NA, NA), constant=
 					y [i] = y [i] + .interval.integral.a2x (cx [nI], cx [nI + 1], cy [nI], cy [nI + 1], cb [nI], cb [nI + 1], x [i])
 			}
 		}
-		y
 	}
+	if (is.matrix (x) )
+		dim (y) = dim (x)
+	y
 }

@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines
-#Copyright (C), Abby Spurdle, 2019
+#kubik: Cubic Hermite Splines and Related Optimization Methods
+#Copyright (C), Abby Spurdle, 2020
 
 #This program is distributed without any warranty.
 
@@ -33,14 +33,16 @@
 {	if (cy1 == 0 && cy2 == 0 && cb1 == 0 && cb2 == 0)
 		list (-1, numeric (), numeric () )
 	else
-	{	dx = cx2 - cx1
+	{	root.expected = cb1 * cb2 < 0
+
+		dx = cx2 - cx1
 		cb1 = dx * cb1
 	    	cb2 = dx * cb2
 		p = .params (cy1, cy2, cb1, cb2)
 		p1 = .params.derivative (cy1, cy2, cb1, cb2)
 		p2 = .params.2nd (cy1, cy2, cb1, cb2)
 
-		v = .quadratic.roots (p1, FALSE, FALSE)
+		v = .quadratic.roots (p1, FALSE, FALSE, root.expected)
 		if (v [[1]] > 0)
 		{	x = .bt (cx1, cx2, dx, v [[2]])
 			y2 = p2 [1] + p2 [2] * v [[2]]

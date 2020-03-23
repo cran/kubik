@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines
-#Copyright (C), Abby Spurdle, 2019
+#kubik: Cubic Hermite Splines and Related Optimization Methods
+#Copyright (C), Abby Spurdle, 2020
 
 #This program is distributed without any warranty.
 
@@ -11,8 +11,10 @@
 #Also, this license should be available at:
 #https://cran.r-project.org/web/licenses/GPL-2
 
-chs.root.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=TRUE)
-{	x = chs.roots.eval (nc, cx, cy, cb, include.implied.roots, warning)
+root.chs.eval = function (cx, cy, cb, ..., include.implied.roots=TRUE, warning=TRUE)
+{	x = roots.chs.eval (cx, cy, cb,
+		include.implied.roots=include.implied.roots,
+		warning=warning)
 	n = length (x)
 	if (n == 0)
 		stop ("no roots")
@@ -22,15 +24,17 @@ chs.root.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=TR
 		stop ("multiple roots")
 }
 
-chs.argmin.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=TRUE)
-{	x = chs.argmins.eval (nc, cx, cy, cb, include.implied.roots, warning)
+argmin.chs.eval = function (cx, cy, cb, ..., include.implied.roots=TRUE, warning=TRUE)
+{	x = argmins.chs.eval (cx, cy, cb,
+		include.implied.roots=include.implied.roots,
+		warning=warning)
 	n = length (x)
 	if (n == 0)
 		stop ("no minima")
 	else if (n == 1)
 		x
 	else
-	{	y = chs.eval (nc, cx, cy, cb, x)
+	{	y = chs.eval (cx, cy, cb, x)
 		I = which.min (y)
 		nI = sum (y [I] == y)
 		if (nI > 1)
@@ -39,15 +43,17 @@ chs.argmin.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=
 	}
 }
 
-chs.argmax.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=TRUE)
-{	x = chs.argmaxs.eval (nc, cx, cy, cb, include.implied.roots, warning)
+argmax.chs.eval = function (cx, cy, cb, ..., include.implied.roots=TRUE, warning=TRUE)
+{	x = argmaxs.chs.eval (cx, cy, cb,
+		include.implied.roots=include.implied.roots,
+		warning=warning)
 	n = length (x)
 	if (n == 0)
 		stop ("no maxima")
 	else if (n == 1)
 		x
 	else
-	{	y = chs.eval (nc, cx, cy, cb, x)
+	{	y = chs.eval (cx, cy, cb, x)
 		I = which.max (y)
 		nI = sum (y [I] == y)
 		if (nI > 1)
@@ -56,9 +62,11 @@ chs.argmax.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=
 	}
 }
 
-chs.argflex.eval = function (nc, cx, cy, cb,
-	include.implied.roots=TRUE, warning=TRUE, all.inflection.points=FALSE)
-{	x = chs.argflexs.eval (nc, cx, cy, cb, include.implied.roots, warning, all.inflection.points)
+argflex.chs.eval = function (cx, cy, cb, ..., 
+	include.implied.roots=TRUE, warning=TRUE)
+{	x = argflexs.chs.eval (cx, cy, cb,
+		include.implied.roots=include.implied.roots,
+		warning=warning)
 	n = length (x)
 	if (n == 0)
 		stop ("no inflection points")
@@ -68,15 +76,17 @@ chs.argflex.eval = function (nc, cx, cy, cb,
 		stop ("multiple inflection points")
 }
 
-chs.argmins.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=TRUE)
-{	r = .chs.roots.derivative.eval (nc, cx, cy, cb, include.implied.roots, warning)
+argmins.chs.eval = function (cx, cy, cb, ..., include.implied.roots=TRUE, warning=TRUE)
+{	r = .chs.roots.derivative.eval (cx, cy, cb, include.implied.roots, warning)
 	r [r [,2] == 1, 1]
 }
 
-chs.argmaxs.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=TRUE)
-{	r = .chs.roots.derivative.eval (nc, cx, cy, cb, include.implied.roots, warning)
+argmaxs.chs.eval = function (cx, cy, cb, ..., include.implied.roots=TRUE, warning=TRUE)
+{	r = .chs.roots.derivative.eval (cx, cy, cb, include.implied.roots, warning)
 	r [r [,2] == -1, 1]
 }
 
-chs.roots.derivative.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=TRUE, all.inflection.points=FALSE)
-	.chs.roots.derivative.eval (nc, cx, cy, cb, include.implied.roots, warning, !all.inflection.points)
+chs.roots.derivative.eval = function (cx, cy, cb, ..., include.implied.roots=TRUE, warning=TRUE)
+{	.chs.roots.derivative.eval (cx, cy, cb,
+		include.implied.roots, warning)
+}

@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines
-#Copyright (C), Abby Spurdle, 2019
+#kubik: Cubic Hermite Splines and Related Optimization Methods
+#Copyright (C), Abby Spurdle, 2020
 
 #This program is distributed without any warranty.
 
@@ -36,97 +36,78 @@
 	nx
 }
 
-.chs.slopes = function (nc, cx, cy, correction=TRUE)
-{	sec = diff (cy) / diff (cx)
-	if (nc == 2)
-		cb = c (sec, sec)
-	else
-	{	ps = .quads.params (nc, cx, cy)
-		cb = numeric (nc)
-		for (i in 2:(nc - 1) )
-			cb [i] = ps [i, 2] + 2 * ps [i, 3] * cx [i]
-		cb [1] = sec [1]
-		cb [nc] = sec [nc - 1]
-		if (correction)
-			cb = .chs.slopes.ext (nc, sec, cb)
+chs = function (cx, cy, cb, ..., constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method)
+{	nc = .test.cps (cx, cy, cb)
+	f = function (x)
+	{	. = .THAT ()
+		with (.,
+			chs.eval (cx, cy, cb, x, outside=outside) )
 	}
-	cb
+	cb = .chs.slopes.trans (nc, cx, cy, cb, constraints, transform, init.method)
+	.EXTEND (f, c ("chs", "kspline"),
+		nc=nc, cx=cx, cy=cy, cb=cb, outside=outside)
 }
 
-.chs.slopes.ext = function (nc, sec, cb)
-{	sign.sec = sign (sec)
-	sign.cb = sign (cb)
-	for (i in 1:(nc - 1) )
-	{	if (sec [i] == 0)
-		{	if (sign.cb [i] + sign.cb [i + 1] != 0)
-			{	cb [i] = 0;
-				cb [i + 1] = 0;
-			}
+chs.derivative = function (cx, cy, cb, ..., constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method)
+{	nc = .test.cps (cx, cy, cb)
+	f = function (x)
+	{	. = .THAT ()
+		with (.,
+			chs.derivative.eval (cx, cy, cb, x, outside=outside) )
+	}
+	cb = .chs.slopes.trans (nc, cx, cy, cb, constraints, transform, init.method)
+	.EXTEND (f, c ("chs.derivative", "kspline"),
+		nc=nc, cx=cx, cy=cy, cb=cb, outside=outside)
+}
+
+chs.integral = function (cx, cy, cb, ..., constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method, constant=0)
+{	nc = .test.cps (cx, cy, cb)
+	f = function (x)
+	{	. = .THAT ()
+		with (.,
+			chs.integral.eval (cx, cy, cb, x, outside=outside, constant=constant) )
+	}
+	cb = .chs.slopes.trans (nc, cx, cy, cb, constraints, transform, init.method)
+	.EXTEND (f, c ("chs.integral", "kspline"),
+		nc=nc, cx=cx, cy=cy, cb=cb, outside=outside, constant=constant)
+}
+
+approx.chs.derivative = function (cx, cy, cb, ...,
+	constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method,
+	apply.constraints.to=0, nth=1, trim=TRUE)
+{	nc = .test.cps (cx, cy, cb)
+	f = function (x)
+	{	. = .THAT ()
+		with (.,
+			chs.eval (cx, cy, cb, x, outside=outside) )
+	}
+	cdefault = chs.constraints ()
+	cs = if (apply.constraints.to == 0) constraints else cdefault
+	cb = .chs.slopes.trans (nc, cx, cy, cb, cs, transform, init.method)
+	for (i in seq_len (nth) )
+	{	cs = if (apply.constraints.to == i) constraints else cdefault
+		cy = cb
+		cb = .chs.slopes (nc, cx, cy, NULL, init.method)
+		if (trim)
+		{	nc = nc - 2
+			I = (2):(nc + 1)
+			cx = cx [I]
+			cy = cy [I]
+			cb = cb [I]
 		}
-		else if (sign.sec [i] + sign.cb [i] != 0 && sign.sec [i] + sign.cb [i + 1] != 0)
-		{	if (cb [i] / sec [i] > 2.999999)
-				cb [i] = 2.999999 * sec [i]
-			if (cb [i + 1] / sec [i] > 2.999999)
-				cb [i + 1] = 2.999999 * sec [i]
-		}
+		cb = .apply.chs.constraints (nc, cx, cy, cb, cs)
 	}
+	.EXTEND (f, c ("approx.chs.derivative", "chs", "kspline"),
+		nc=nc, cx=cx, cy=cy, cb=cb, outside=outside)
+}
+
+.chs.slopes.trans = function (nc, cx, cy, cb, constraints, transform, init.method)
+{	if (missing (cb) )
+	{	if (transform)
+			stop ("slopes needed if transform is true")
+		cb = .chs.slopes (nc, cx, cy, constraints, init.method)
+	}
+	else if (transform)
+		cb = .apply.chs.constraints (nc, cx, cy, cb, constraints)
 	cb
-}
-
-chs = function (cx, cy, cb, correction=TRUE, outside = c (NA, NA) )
-{	nc = .test.cps (cx, cy, cb)
-	f = function (x)
-	{	. = THAT ()
-		chs.eval (.$nc, .$cx, .$cy, .$cb, x, .$outside)
-	}
-	if (missing (cb) )
-		cb = .chs.slopes (nc, cx, cy, correction)
-	EXTEND (f, c ("chs", "k.spline"), nc, cx, cy, cb, outside)
-}
-
-chs.derivative = function (cx, cy, cb, correction=TRUE, outside = c (NA, NA) )
-{	nc = .test.cps (cx, cy, cb)
-	f = function (x)
-	{	. = THAT ()
-		chs.derivative.eval (.$nc, .$cx, .$cy, .$cb, x, .$outside)
-	}
-	if (missing (cb) )
-		cb = .chs.slopes (nc, cx, cy, correction)
-	EXTEND (f, c ("chs.derivative", "k.spline"), nc, cx, cy, cb, outside)
-}
-
-chs.integral = function (cx, cy, cb, correction=TRUE, outside = c (NA, NA), constant=0)
-{	nc = .test.cps (cx, cy, cb)
-	f = function (x)
-	{	. = THAT ()
-		chs.integral.eval (.$nc, .$cx, .$cy, .$cb, x, .$outside, .$constant)
-	}
-	if (missing (cb) )
-		cb = .chs.slopes (nc, cx, cy, correction)
-	EXTEND (f, c ("chs.integral", "k.spline"), nc, cx, cy, cb, outside, constant)
-}
-
-approx.chs.derivative = function (cx, cy, cb, correction=TRUE, outside = c (NA, NA), nth=1)
-{	nc = .test.cps (cx, cy, cb)
-	f = function (x)
-	{	. = THAT ()
-		chs.eval (.$nc, .$cx, .$cy, .$cb, x, .$outside)
-	}
-	if (missing (cb) )
-		cb = .chs.slopes (nc, cx, cy, correction)
-	for (i in 1:nth)
-	{	cy = cb
-		cb = .chs.slopes (nc, cx, cb, correction)
-	}
-	EXTEND (f, c ("approx.chs.derivative", "chs", "k.spline"), nc, cx, cy, cb, outside)
-}
-
-chs.tangents = function (cx, cy, correction=TRUE)
-{	cb = chs.slopes (cx, cy, correction)
-	cbind (intercept = cy - cb * cx, cb)
-}
-
-chs.slopes = function (cx, cy, correction=TRUE)
-{	nc = .test.cps (cx, cy)
-	.chs.slopes (nc, cx, cy, correction)
 }

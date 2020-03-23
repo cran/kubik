@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines
-#Copyright (C), Abby Spurdle, 2019
+#kubik: Cubic Hermite Splines and Related Optimization Methods
+#Copyright (C), Abby Spurdle, 2020
 
 #This program is distributed without any warranty.
 
@@ -11,8 +11,10 @@
 #Also, this license should be available at:
 #https://cran.r-project.org/web/licenses/GPL-2
 
-chs.roots.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=TRUE)
-{	ns = nc - 1
+roots.chs.eval = function (cx, cy, cb, ..., include.implied.roots=TRUE, warning=TRUE)
+{	nc = length (cx)
+
+	ns = nc - 1
 	Rc = numeric (ns)
 	xs = vector ("list", ns)
 	v = .interval.roots (cx [1], cx [2], cy [1], cy [2], cb [1], cb [2], TRUE, (ns == 1) )
@@ -42,9 +44,11 @@ chs.roots.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=T
 		unlist (xs)
 }
 
-.chs.roots.derivative.eval = function (nc, cx, cy, cb,
+.chs.roots.derivative.eval = function (cx, cy, cb,
 	include.implied.roots=TRUE, warning=TRUE, remove=FALSE)
-{	I = rep (FALSE, nc)
+{	nc = length (cx)
+
+	I = rep (FALSE, nc)
 	S = rep (0, nc)
 	ns = nc - 1
 	Rc = numeric (ns)
@@ -87,9 +91,11 @@ chs.roots.eval = function (nc, cx, cy, cb, include.implied.roots=TRUE, warning=T
 		.sort.2 (c (cx [I], unlist (xs) ), c (S [I], unlist (ss) ) )
 }
 
-chs.argflexs.eval = function (nc, cx, cy, cb,
-	include.implied.roots=TRUE, warning=TRUE, all.inflection.points=FALSE)
-{	I = rep (FALSE, nc)
+argflexs.chs.eval = function (cx, cy, cb, ...,
+	include.implied.roots=TRUE, warning=TRUE)
+{	nc = length (cx)
+
+	I = rep (FALSE, nc)
 	ns = nc - 1
 	Rc = numeric (ns)
 	xs = vector ("list", ns)
@@ -104,8 +110,7 @@ chs.argflexs.eval = function (nc, cx, cy, cb,
 				I [i] = (.implied.sign (cx, cy, cb, i - 1, i) == 0)
 		}
 	}
-	if (! all.inflection.points)
-		xs [.is.quadratic.suggestive (nc, cx, cy, cb)] = NULL
+	xs [.is.quadratic.suggestive (nc, cx, cy, cb)] = NULL
 	levs = (Rc == -1)
 	if (ns > 2 && any (levs) )
 	{	if (include.implied.roots)

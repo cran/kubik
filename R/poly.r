@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines
-#Copyright (C), Abby Spurdle, 2019
+#kubik: Cubic Hermite Splines and Related Optimization Methods
+#Copyright (C), Abby Spurdle, 2020
 
 #This program is distributed without any warranty.
 
@@ -16,43 +16,64 @@
 	list (length (x), x)
 }
 
+.roots.2 = function (x)
+{	x [x > -0.000001 & x < 0] = 0
+	x [x > 1 & x < 1.000001] = 1
+	x = x [x >= 0 & x <= 1]
+	if (length (x) != 1)
+		stop ("root finding algorithm failed")
+	list (1, x)
+}
+
 .sympoly = function (p)
 {	text = paste ("function (x)", p [1], "+", p [2], "* x +", p [3], "* x ^ 2 +", p [4], "* x  ^ 3")
-	eval (parse (text=text) )
+	eval (str2lang (text) )
 }
 
 .linear.root = function (p, include.lower, include.upper)
-{	if (p [1] == 0 && p [2] == 0)
+{	ap = abs (p)
+	tol = 1e-10
+
+	if (ap [1] < tol && ap [2] < tol)
 		list (-1, numeric () )
-	else if (p [2] == 0)
+	else if (ap [2] < tol)
 		list (0, numeric () )
 	else
 		.roots (.linear.root.ext (p), include.lower, include.upper)
 }
 
-.quadratic.roots = function (p, include.lower, include.upper)
-{	if (p [1] == 0 && p [2] == 0 && p [3] == 0)
+.quadratic.roots = function (p, include.lower, include.upper, root.expected=FALSE)
+{	ap = abs (p)
+	tol = 1e-10
+
+	if (ap [1] < tol && ap [2] < tol && ap [3] < tol)
 		list (-1, numeric () )
-	else if (p [2] == 0 && p [3] == 0)
+	else if (ap [2] < tol && ap [3] < tol)
 		list (0, numeric () )
 	else
-	{	if (p [3] == 0)
+	{	if (ap [3] < tol)
 			x = .linear.root.ext (p)
 		else
 			x = .quadratic.roots.ext (p)
-		.roots (x, include.lower, include.upper)
+		if (root.expected)
+			.roots.2 (x)
+		else
+			.roots (x, include.lower, include.upper)
 	}
 }
 
 .cubic.roots = function (p, cy1, cy2, include.lower, include.upper)
-{	if (p [1] == 0 && p [2] == 0 && p [3] == 0 && p [4] == 0)
+{	ap = abs (p)
+	tol = 1e-10
+
+	if (ap [1] < tol && ap [2] < tol && ap [3] < tol && ap [4] < tol)
 		list (-1, numeric ())
-	else if (p [2] == 0 && p [3] == 0 && p [4] == 0)
+	else if (ap [2] < tol && ap [3] < tol && ap [4] < tol)
 		list (0, numeric () )
 	else
-	{	if (p [3] == 0 && p [4] == 0)
+	{	if (ap [3] < tol && ap [4] < tol)
 			x = .linear.root.ext (p)
-		else if (p [4] == 0)
+		else if (ap [4] < tol)
 			x = .quadratic.roots.ext (p)
 		else
 			x = .cubic.roots.ext (p, cy1, cy2)
@@ -79,7 +100,8 @@
 .cubic.roots.ext = function (p, cy1, cy2)
 {	f = .sympoly (p)
 	p1 = (1:3) * p [2:4]
-	r1 = .within (.quadratic.roots.ext (p1), FALSE, FALSE)
+	r1 = .quadratic.roots.ext (p1)
+	r1 = r1 [r1 > 0 & r1 < 1]
 	nr1 = length (r1)
 	y = c (cy1, f (r1), cy2)
 	if (nr1 == 0)
@@ -135,20 +157,16 @@
 	}
 }
 
-.quad.params = function (cx, cy)
-	solve (cbind (1, cx, cx ^ 2), cy)
-
-.quad.params.2 = function (cx, cy, cxi, cbi)
-{	r1 = cbind (1, cx, cx ^ 2)
-	r2 = c (0, 1, 2 * cxi)
-	solve (rbind (r1, r2), c (cy, cbi) )
-}
-
-.quads.params = function (nc, cx, cy)
-{	p = matrix (0, nc, 3)
-	for (i in 2:(nc - 1) )
-	{	I = (i - 1):(i + 1)
-		p [i,] = .quad.params (cx [I], cy [I])
+.quad.params = function (nc, cx, cy)
+{	if (nc == 3)
+	{	p = solve (cbind (1, cx, cx ^ 2), cy)
+		rbind (p, p)
 	}
-	p
+	else
+	{	Ia = 1:3
+		Ib = (nc - 2):nc
+		p1 = solve (cbind (1, cx [Ia], cx [Ia] ^ 2), cy [Ia])
+		p2 = solve (cbind (1, cx [Ib], cx [Ib] ^ 2), cy [Ib])
+		rbind (p1, p2)
+	}
 }
