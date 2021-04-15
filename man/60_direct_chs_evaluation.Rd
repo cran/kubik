@@ -1,4 +1,4 @@
-\name{21_direct_chs_evaluation}
+\name{60_direct_chs_evaluation}
 \alias{chs.eval}
 \alias{chs.derivative.eval}
 \alias{chs.integral.eval}
@@ -33,7 +33,7 @@ Alternatively, you can use function objects, which are likely to be more conveni
 \bold{chs.eval}\cr
 Evaluate cubic Hermite splines.
 
-\bold{chs.deritivative.eval}\cr
+\bold{chs.derivative.eval}\cr
 Evaluate (exact) derivatives of cubic Hermite splines.
 
 \bold{chs.integral.eval}\cr

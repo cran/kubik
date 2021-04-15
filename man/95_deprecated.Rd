@@ -1,4 +1,4 @@
-\name{31_deprecated}
+\name{95_deprecated}
 \alias{chs.argmins}
 \alias{chs.argmaxs}
 \title{Deprecated Functions}

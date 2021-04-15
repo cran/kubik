@@ -1,4 +1,4 @@
-\name{16_slopes_and_tangents}
+\name{41_slopes}
 \alias{chs.slopes}
 \alias{chs.tangents}
 \alias{apply.chs.constraints}
@@ -17,9 +17,9 @@ apply.chs.constraints (cx, cy, cb, \dots,
 \item{cx}{Vector of unique ascending control point x values.\cr (Preferably, equally-spaced).}
 \item{cy}{Vector of control point y values.}
 \item{cb}{Vector of control slopes.}
-\item{constraints}{A chs.constraints object.\cr Can be NULL or NA, for no constraints.\cr\cr Refer to the help file for \link{chs.constraints} for more information.}
+\item{constraints}{A CHS.Constraints object.\cr Can be NULL or NA, for no constraints.\cr\cr Refer to the help file for \link{chs.constraints} for more information.}
 \item{init.method}{Initialization method for slopes.\cr Possible values are "SL" and "SQ".}
-\item{\dots}{Alternative (possibly simpler) way of specifying constraints.\cr Ignored if a chs.constraints object supplied.\cr\cr This (specifying constraints in dots) should not be used inside packages, because the use of dots may change.}
+\item{\dots}{Alternative (possibly simpler) way of specifying constraints.\cr Ignored, if a chs.constraints object supplied.\cr\cr This (specifying constraints in dots) should not be used inside packages, because the use of dots may change.}
 }
 \value{
 chs.slopes returns a (possibly) suitable vector of slopes.

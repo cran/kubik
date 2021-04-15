@@ -1,4 +1,4 @@
-\name{14_roots}
+\name{50_roots}
 \alias{root.chs}
 \alias{argmin.chs}
 \alias{argmax.chs}
@@ -11,38 +11,23 @@
 \title{Roots}
 \description{Compute roots of cubic Hermite splines, using function objects.}
 \usage{
-root.chs (f, \dots, include.implied.roots=TRUE, warning=TRUE)
-argmin.chs (f, \dots, include.implied.roots=TRUE, warning=TRUE)
-argmax.chs (f, \dots, include.implied.roots=TRUE, warning=TRUE)
-argflex.chs (f, \dots, include.implied.roots=TRUE, warning=TRUE)
+root.chs (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
+argmin.chs (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
+argmax.chs (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
+argflex.chs (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
 
-roots.chs (f, \dots, include.implied.roots=TRUE, warning=TRUE)
-argmins.chs (f, \dots, include.implied.roots=TRUE, warning=TRUE)
-argmaxs.chs (f, \dots, include.implied.roots=TRUE, warning=TRUE)
-argflexs.chs (f, \dots, include.implied.roots=TRUE, warning=TRUE)
+roots.chs (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
+argmins.chs (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
+argmaxs.chs (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
+argflexs.chs (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
 
-chs.roots.derivative (f, \dots, include.implied.roots=TRUE, warning=TRUE)
+chs.roots.derivative (sf, \dots, include.implied.roots=TRUE, warning=TRUE)
 }
 \arguments{
-\item{f}{A chs (or approx.chs.derivative) object.}
+\item{sf}{A CHS object.}
 \item{include.implied.roots}{If true, include implied roots.}
 \item{warning}{If true, give a warning if there's relevant constant/level (or linear) sections.}
 \item{\dots}{Ignored.}
-}
-\value{
-root.chs returns a single real root, if a single real root exists, otherwise, it returns an error.\cr
-roots.chs returns all the real roots, which will be a zero-length numeric vector, if there are no real roots.
-
-argmin.chs returns a single global argmin, if a single global argmin exists, otherwise, it returns an error.\cr
-argmins.chs returns all argmins, which will be a zero-length numeric vector, if there are no minima.
-
-argmax.chs and argmaxs.chs are the same as argmin.chs and argmins.chs, except they're for argmax(s) rather than argmin(s).\cr
-argflex.chs() and argflexs.chs are similar to the functions above, except that they're for inflection points.
-
-Unlike the other functions here, chs.roots.derivative returns a two-column matrix.\cr
-The first column gives the roots of the derivative.\cr
-And the second column gives a numeric value equal to the sign of the second derivative, so:\cr
-1 (for minima), -1 (for maxima) and 0 (for stationary inflection points).
 }
 \details{
 These functions compute roots of cubic Hermite splines, using function objects.\cr
@@ -66,9 +51,23 @@ Notes:\cr
 (2) Currently, these functions may fail to find roots, if they're extremely close to the control points. Except, the functions should find optima in well-defined splines (with no more than one optimum per spline segment), regardless of where the optima are located.\cr
 (3) The chs.roots.derivative function is likely to be deprecated in the future, and replaced by a better function.\cr
 }
+\value{
+root.chs returns a single real root, if a single real root exists, otherwise, it returns an error.\cr
+roots.chs returns all the real roots, which will be a zero-length numeric vector, if there are no real roots.
 
+argmin.chs returns a single global argmin, if a single global argmin exists, otherwise, it returns an error.\cr
+argmins.chs returns all argmins, which will be a zero-length numeric vector, if there are no minima.
+
+argmax.chs and argmaxs.chs are the same as argmin.chs and argmins.chs, except they're for argmax(s) rather than argmin(s).\cr
+argflex.chs() and argflexs.chs are similar to the functions above, except that they're for inflection points.
+
+Unlike the other functions here, chs.roots.derivative returns a two-column matrix.\cr
+The first column gives the roots of the derivative.\cr
+And the second column gives a numeric value equal to the sign of the second derivative, so:\cr
+1 (for minima), -1 (for maxima) and 0 (for stationary inflection points).
+}
 \references{Please refer to the help page for \link{chs} for background information and references.}
-\seealso{\link{chs}, \link{solve.chs}, \link{roots.chs.eval}}
+\seealso{\link{chs}, \link{solve.CHS}, \link{roots.chs.eval}}
 \examples{
 #control points
 cx <- 1:4

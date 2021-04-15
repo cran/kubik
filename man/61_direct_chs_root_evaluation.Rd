@@ -1,4 +1,4 @@
-\name{22_direct_chs_root_evaluation}
+\name{61_direct_chs_root_evaluation}
 \alias{root.chs.eval}
 \alias{argmin.chs.eval}
 \alias{argmax.chs.eval}

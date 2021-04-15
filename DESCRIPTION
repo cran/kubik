@@ -1,14 +1,15 @@
 Package: kubik
-Title: Cubic Hermite Splines and Related Optimization Methods
-Version: 0.2.0
-Date: 2020-03-23
+Title: Cubic Hermite Splines and Related Root Finding Methods
+Version: 0.3.0
+Date: 2021-04-15
 License: GPL (>= 2)
 Maintainer: Abby Spurdle <spurdle.a@gmail.com>
 Author: Abby Spurdle
 URL: https://sites.google.com/site/spurdlea/r
-Description: Constructs, plots and evaluates constrained cubic Hermite splines, which can be used to construct monotonic and bounded splines. Computes their first derivatives, indefinite integrals and smooth approximations of their first, second and higher derivatives. Also, computes their roots/solutions, along with their minima/maxima and inflection points.
-Suggests: intoo, vectools
+Description: Supports cubic Hermite splines (Fritsch & Carlson, 1980 <doi:10.1137/0717021>), along with their derivatives/integrals. Also, supports monotonically increasing/decreasing splines, and computes their roots and minimum/maximum points.
+Depends: methods
+Contact: Primary <spurdle.a@gmail.com>, Secondary <spurdle.a@aol.com>
 NeedsCompilation: no
-Packaged: 2020-03-22 23:10:21 UTC; spurdle
+Packaged: 2021-04-14 19:41:38 UTC; spurdle
 Repository: CRAN
-Date/Publication: 2020-03-23 07:20:11 UTC
+Date/Publication: 2021-04-15 05:20:02 UTC

@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines and Related Optimization Methods
-#Copyright (C), Abby Spurdle, 2020
+#kubik: Cubic Hermite Splines and Related Foot Finding Methods
+#Copyright (C), Abby Spurdle, 2019 to 2021
 
 #This program is distributed without any warranty.
 
@@ -38,7 +38,7 @@
 			}
 		}
 	}
-	if (is.matrix (x) )
+	if (is.array (x) )
 		dim (y) = dim (x)
 	y
 }
@@ -77,7 +77,7 @@ chs.integral.eval = function (cx, cy, cb, x, ..., outside = c (NA, NA), constant
 			}
 		}
 	}
-	if (is.matrix (x) )
+	if (is.array (x) )
 		dim (y) = dim (x)
 	y
 }

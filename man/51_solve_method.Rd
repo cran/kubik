@@ -1,12 +1,12 @@
-\name{15_solve_method}
-\alias{solve.chs}
+\name{51_solve_method}
+\alias{solve.CHS}
 \title{Solve Method}
-\description{Solve method, for chs objects.}
+\description{Solve method, for CHS objects.}
 \usage{
-\method{solve}{chs}(a, b, \dots, to.list=FALSE)
+\method{solve}{CHS}(a, b=0, \dots, to.list=FALSE)
 }
 \arguments{
-\item{a}{A chs object.}
+\item{a}{A CHS object.}
 \item{b}{A vector of y values.}
 \item{to.list}{If true, return list.\cr Ignored, if b has length two or greater.}
 \item{\dots}{Other arguments, for the roots.chs.eval function.}
@@ -31,7 +31,7 @@ It computes x values, where the spline's y value is equal to the values in b.
 cx <- 1:4
 cy <- c (-4, -1, 1, 4)
 
-#cubic hermite spline
+#cubic Hermite spline
 #(with function object, and default slopes)
 f <- chs (cx, cy)
 

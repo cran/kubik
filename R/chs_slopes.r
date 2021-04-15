@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines and Related Optimization Methods
-#Copyright (C), Abby Spurdle, 2020
+#kubik: Cubic Hermite Splines and Related Foot Finding Methods
+#Copyright (C), Abby Spurdle, 2019 to 2021
 
 #This program is distributed without any warranty.
 
@@ -16,21 +16,31 @@
 	diff (range (dx) ) < min (dx) / 200
 }
 
-chs.constraints = function (correction=TRUE, ..., bounds, increasing=FALSE, decreasing=FALSE)
-{	if (missing (bounds) )
-	{	bounded = c (FALSE, FALSE)
-		bounds = c (NA, NA)
-	}
-	else
-	{	bounded = is.finite (bounds)
-		if (diff (bounds) <= 0)
-			stop ("diff (bounds) <= 0")
-	}
+#note, bounds arg, deprecated
+.chs.constraints = function (correction, increasing, decreasing, flim, ..., bounds)
+{	.arg.error (...)
+	if (! missing (bounds) )
+		flim = bounds
+	.bounded = is.finite (flim)
+	if (diff (flim) <= 0)
+		stop ("diff (flim) <= 0")
 	if (increasing && decreasing)
 		stop ("increasing and decreasing constraints")
-	v = list (correction=correction, bounded=bounded, bounds=bounds, increasing=increasing, decreasing=decreasing)
-	.EXTEND (v, "chs.constraints")
+
+	new ("CHS.Constraints",
+		.bounded=.bounded,
+		correction=correction,
+		increasing=increasing,
+		decreasing=decreasing,
+		flim=flim)
 }
+
+chs.constraints = function (correction=TRUE, ...,
+	increasing=FALSE, decreasing=FALSE,
+	flim = c (fmin, fmax),
+		fmin = -Inf,
+		fmax = +Inf)
+	.chs.constraints (correction, increasing, decreasing, flim, ...)
 
 chs.slopes = function (cx, cy, ..., constraints = chs.constraints (, ...), init.method)
 {	nc = .test.cps (cx, cy)
@@ -44,7 +54,7 @@ chs.slopes = function (cx, cy, ..., constraints = chs.constraints (, ...), init.
 }
 
 chs.tangents = function (cx, cy, ..., constraints = chs.constraints (, ...), init.method)
-{	cb = chs.slopes (cx, cy, constraints, init.method)
+{	cb = chs.slopes (cx, cy, constraints=constraints, init.method=init.method)
 	cbind (intercept = cy - cb * cx, slope=cb)
 }
 
@@ -89,22 +99,22 @@ apply.chs.constraints = function (cx, cy, cb, ..., constraints = chs.constraints
 .apply.ext = function (nc, cx, cy, sec, cb, constraints)
 {	if (is.null (constraints) || (is.vector (constraints) && length (constraints) == 1 && is.na (constraints) ) )
 		NULL
-	else if (inherits (constraints, "chs.constraints") )
-	{	if (constraints$bounded [1] && any (cy < constraints$bounds [1]) )
+	else if (is (constraints, "CHS.Constraints") )
+	{	if (constraints@.bounded [1] && any (cy < constraints@flim [1]) )
 			stop ("some cy < bounds [1]")
-		if (constraints$bounded [2] && any (cy > constraints$bounds [2]) )
+		if (constraints@.bounded [2] && any (cy > constraints@flim [2]) )
 			stop ("some cy > bounds [2]")
-		if (constraints$increasing && any (diff (cy) < 0) )
-			stop ("increasing constraint needs non-decreasing cy")
-		if (constraints$decreasing && any (diff (cy) > 0) )
-			stop ("decreasing constraint needs non-increasing cy")
+		if (constraints@increasing && any (diff (cy) < 0) )
+			stop ("increasing (nondecreasing) constraint needs nondecreasing cy")
+		if (constraints@decreasing && any (diff (cy) > 0) )
+			stop ("decreasing (nonincreasing) constraint needs nonincreasing cy")
 
 		ns = nc - 1
-		mono = (constraints$increasing || constraints$decreasing)
+		mono = (constraints@increasing || constraints@decreasing)
 
-		if (constraints$correction)
+		if (constraints@correction)
 			cb = .apply.ext.2 (ns, sec, cb)
-		if (any (constraints$bounded) || mono)
+		if (any (constraints@.bounded) || mono)
 		{	I = rep (FALSE, ns)
 			for (i in 1:ns)
 			{	K = c (i, i + 1)
@@ -116,8 +126,8 @@ apply.chs.constraints = function (cx, cy, cb, ..., constraints = chs.constraints
 					else
 					{	y = chs.eval (cx [K], cy [K], cb [K], x)
 						I [i] = (
-							(constraints$bounded [1] && any (y < constraints$bounds [1]) ) ||
-							(constraints$bounded [2] && any (y > constraints$bounds [2]) ) )
+							(constraints@.bounded [1] && any (y < constraints@flim [1]) ) ||
+							(constraints@.bounded [2] && any (y > constraints@flim [2]) ) )
 					}
 				}
 			}
@@ -126,7 +136,7 @@ apply.chs.constraints = function (cx, cy, cb, ..., constraints = chs.constraints
 		}
 	}
 	else
-		stop ("constraints needs to be NULL, NA or chs.constraints object")
+		stop ("constraints needs to be NULL, NA or CHS.Constraints object")
 	cb
 }
 

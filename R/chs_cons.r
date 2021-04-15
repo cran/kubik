@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines and Related Optimization Methods
-#Copyright (C), Abby Spurdle, 2020
+#kubik: Cubic Hermite Splines and Related Foot Finding Methods
+#Copyright (C), Abby Spurdle, 2019 to 2021
 
 #This program is distributed without any warranty.
 
@@ -36,7 +36,8 @@
 	nx
 }
 
-chs = function (cx, cy, cb, ..., constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method)
+chs = function (cx = 1:length (cy), cy, cb, ...,
+	constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method)
 {	nc = .test.cps (cx, cy, cb)
 	f = function (x)
 	{	. = .THAT ()
@@ -44,11 +45,23 @@ chs = function (cx, cy, cb, ..., constraints = chs.constraints (, ...), transfor
 			chs.eval (cx, cy, cb, x, outside=outside) )
 	}
 	cb = .chs.slopes.trans (nc, cx, cy, cb, constraints, transform, init.method)
-	.EXTEND (f, c ("chs", "kspline"),
-		nc=nc, cx=cx, cy=cy, cb=cb, outside=outside)
+
+	new ("CHS", f,
+		.class.info=.info.CHS,
+		nc=nc,
+		cx=cx,
+		cy=cy,
+		cb=cb,
+		outside = as.numeric (outside) )
 }
 
-chs.derivative = function (cx, cy, cb, ..., constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method)
+incr.chs = function (...)
+	chs (..., constraints = chs.constraints (increasing=TRUE) )
+decr.chs = function (...)
+	chs (..., constraints = chs.constraints (decreasing=TRUE) )
+
+chs.derivative = function (cx = 1:length (cy), cy, cb, ...,
+	constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method)
 {	nc = .test.cps (cx, cy, cb)
 	f = function (x)
 	{	. = .THAT ()
@@ -56,11 +69,18 @@ chs.derivative = function (cx, cy, cb, ..., constraints = chs.constraints (, ...
 			chs.derivative.eval (cx, cy, cb, x, outside=outside) )
 	}
 	cb = .chs.slopes.trans (nc, cx, cy, cb, constraints, transform, init.method)
-	.EXTEND (f, c ("chs.derivative", "kspline"),
-		nc=nc, cx=cx, cy=cy, cb=cb, outside=outside)
+
+	new ("CHSD", f,
+		.class.info=.info.CHSD,
+		nc=nc,
+		cx=cx,
+		cy=cy,
+		cb=cb,
+		outside = as.numeric (outside) )
 }
 
-chs.integral = function (cx, cy, cb, ..., constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method, constant=0)
+chs.integral = function (cx = 1:length (cy), cy, cb, ...,
+	constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method, constant=0)
 {	nc = .test.cps (cx, cy, cb)
 	f = function (x)
 	{	. = .THAT ()
@@ -68,11 +88,18 @@ chs.integral = function (cx, cy, cb, ..., constraints = chs.constraints (, ...),
 			chs.integral.eval (cx, cy, cb, x, outside=outside, constant=constant) )
 	}
 	cb = .chs.slopes.trans (nc, cx, cy, cb, constraints, transform, init.method)
-	.EXTEND (f, c ("chs.integral", "kspline"),
-		nc=nc, cx=cx, cy=cy, cb=cb, outside=outside, constant=constant)
+
+	new ("CHSI", f,
+		.class.info=.info.CHSI,
+		nc=nc,
+		cx=cx,
+		cy=cy,
+		cb=cb,
+		outside = as.numeric (outside),
+		constant=constant)
 }
 
-approx.chs.derivative = function (cx, cy, cb, ...,
+approx.chs.derivative = function (cx = 1:length (cy), cy, cb, ...,
 	constraints = chs.constraints (, ...), transform=FALSE, outside = c (NA, NA), init.method,
 	apply.constraints.to=0, nth=1, trim=TRUE)
 {	nc = .test.cps (cx, cy, cb)
@@ -89,7 +116,7 @@ approx.chs.derivative = function (cx, cy, cb, ...,
 		cy = cb
 		cb = .chs.slopes (nc, cx, cy, NULL, init.method)
 		if (trim)
-		{	nc = nc - 2
+		{	nc = nc - 2L
 			I = (2):(nc + 1)
 			cx = cx [I]
 			cy = cy [I]
@@ -97,8 +124,14 @@ approx.chs.derivative = function (cx, cy, cb, ...,
 		}
 		cb = .apply.chs.constraints (nc, cx, cy, cb, cs)
 	}
-	.EXTEND (f, c ("approx.chs.derivative", "chs", "kspline"),
-		nc=nc, cx=cx, cy=cy, cb=cb, outside=outside)
+
+	new ("ACHSD", f,
+		.class.info=.info.ACHSD,
+		nc=nc,
+		cx=cx,
+		cy=cy,
+		cb=cb,
+		outside = as.numeric (outside) )
 }
 
 .chs.slopes.trans = function (nc, cx, cy, cb, constraints, transform, init.method)

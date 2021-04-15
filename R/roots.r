@@ -1,5 +1,5 @@
-#kubik: Cubic Hermite Splines and Related Optimization Methods
-#Copyright (C), Abby Spurdle, 2020
+#kubik: Cubic Hermite Splines and Related Foot Finding Methods
+#Copyright (C), Abby Spurdle, 2019 to 2021
 
 #This program is distributed without any warranty.
 
@@ -13,44 +13,44 @@
 
 .root.chs = function (f, g, include.implied.roots, warning, ...)
 {	. = attributes (g)
-	if (inherits (g, "chs") )
+	if (is (g, "CHS") )
 	{	f (.$cx, .$cy, .$cb,
 			include.implied.roots=include.implied.roots,
 			warning=warning,
 			...)
 	}
 	else
-		stop ("needs chs object")
+		stop ("needs CHS object")
 }
 
-root.chs = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (root.chs.eval, f, include.implied.roots, warning)
+root.chs = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (root.chs.eval, sf, include.implied.roots, warning)
 
-argmin.chs = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (argmin.chs.eval, f, include.implied.roots, warning)
+argmin.chs = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (argmin.chs.eval, sf, include.implied.roots, warning)
 
-argmax.chs = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (argmax.chs.eval, f, include.implied.roots, warning)
+argmax.chs = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (argmax.chs.eval, sf, include.implied.roots, warning)
 
-argflex.chs = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (argflex.chs.eval, f, include.implied.roots, warning)
+argflex.chs = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (argflex.chs.eval, sf, include.implied.roots, warning)
 
-roots.chs = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (roots.chs.eval, f, include.implied.roots, warning)
+roots.chs = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (roots.chs.eval, sf, include.implied.roots, warning)
 
-argmins.chs = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (argmins.chs.eval, f, include.implied.roots, warning)
+argmins.chs = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (argmins.chs.eval, sf, include.implied.roots, warning)
 
-argmaxs.chs = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (argmaxs.chs.eval, f, include.implied.roots, warning)
+argmaxs.chs = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (argmaxs.chs.eval, sf, include.implied.roots, warning)
 
-argflexs.chs = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (argflexs.chs.eval, f, include.implied.roots, warning)
+argflexs.chs = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (argflexs.chs.eval, sf, include.implied.roots, warning)
 
-chs.roots.derivative = function (f, ..., include.implied.roots=TRUE, warning=TRUE)
-	.root.chs (chs.roots.derivative.eval, f, include.implied.roots, warning)
+chs.roots.derivative = function (sf, ..., include.implied.roots=TRUE, warning=TRUE)
+	.root.chs (chs.roots.derivative.eval, sf, include.implied.roots, warning)
 
-solve.chs = function (a, b, ..., to.list=FALSE)
+solve.CHS = function (a, b=0, ..., to.list=FALSE)
 {	. = attributes (a)
 	n = length (b)
 	if (n == 1 && ! to.list)

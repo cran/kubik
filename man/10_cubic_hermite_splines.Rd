@@ -1,46 +1,69 @@
-\name{11_cubic_hermite_splines}
+\name{10_cubic_hermite_splines}
 \alias{chs}
 \alias{chs.derivative}
 \alias{chs.integral}
 \alias{approx.chs.derivative}
+\alias{incr.chs}
+\alias{decr.chs}
 \title{Cubic Hermite Splines}
-\description{Functions for constructing cubic Hermite splines (as function objects), and their derivatives and indefinite integrals.}
+\description{Functions for constructing cubic Hermite splines (as S4-based function objects), and their derivatives and indefinite integrals.}
 \usage{
-chs (cx, cy, cb, \dots, constraints = chs.constraints (, \dots),
+chs (cx = 1:length (cy), cy, cb, \dots,
+    constraints = chs.constraints (, \dots),
     transform=FALSE, outside = c (NA, NA), init.method)
 
-chs.derivative (cx, cy, cb, \dots, constraints = chs.constraints (, \dots),
+chs.derivative (cx = 1:length (cy), cy, cb, \dots,
+    constraints = chs.constraints (, \dots),
     transform=FALSE, outside = c (NA, NA), init.method)
 
-chs.integral (cx, cy, cb, \dots, constraints = chs.constraints (, \dots),
+chs.integral (cx = 1:length (cy), cy, cb, \dots,
+    constraints = chs.constraints (, \dots),
     transform=FALSE, outside = c (NA, NA), init.method,
     constant=0)
 
-approx.chs.derivative (cx, cy, cb, \dots,
+approx.chs.derivative (cx = 1:length (cy), cy, cb, \dots,
     constraints = chs.constraints (, \dots),
     transform=FALSE, outside = c (NA, NA), init.method,
     apply.constraints.to=0, nth=1, trim=TRUE)
+
+#call chs, setting the constraints arg
+incr.chs (\dots)
+decr.chs (\dots)
 }
 \arguments{
-\item{cx}{Vector of unique ascending control point x values.\cr (Preferably, equally-spaced).}
-\item{cy}{Vector of control point y values.}
-\item{cb}{Vector of control slopes.\cr Optional, unless transform is true.}
-\item{constraints}{A chs.constraints object.\cr Can be NULL or NA, for no constraints.\cr By default (if transform is false), ignored if cb supplied.\cr (Except for approximate derivatives).\cr\cr Refer to the help file for \link{chs.constraints} for more information.}
-\item{transform}{Logical value, if true, transform cb (the slopes), subject to constraints.}
+\item{cx}{
+	Vector of unique ascending control point x values.\cr
+	(Preferably, equally-spaced).}
+\item{cy}{
+	Vector of control point y values.}
+\item{cb}{
+	Vector of control slopes.\cr
+	Optional, unless transform is true.}
+\item{constraints}{
+	A CHS.Constraints object.\cr
+	Can be NULL or NA, for no constraints.\cr
+	By default (if transform is false), ignored if cb supplied.\cr 
+	Except for approximate derivatives).\cr\cr
+	Refer to the help file for \link{chs.constraints} for more information.}
+\item{transform}{Logical value, if true, transform cb (the user-supplied slopes), subject to constraints.}
 \item{outside}{A vector of length two, giving the value of the spline outside the control points.}
-\item{init.method}{Initialization method for slopes.\cr Possible values are "SL" and "SQ".\cr Ignored if cb supplied.\cr (Except for approximate derivatives).\cr\cr Refer to the help file for \link{chs.slopes} for more information.}
+\item{init.method}{
+	Initialization method for slopes.\cr
+	Possible values are "SL" and "SQ".\cr
+	Ignored, if cb supplied.\cr
+	(Except for approximate derivatives).\cr\cr
+	Refer to the help file for \link{chs.slopes} for more information.}
 \item{constant}{Constant term.}
 \item{apply.constraints.to}{Integer, between 0 and nth, which derivative to apply constraints to.}
-\item{nth}{Which derivative to approximate.}
-\item{trim}{Logical value, if true, remove nth control points, from both the beginning and end of the spline.\cr For example, if nth=2, two control points are removed from each end.\cr\cr This should be true (the default), if non-default constraints are used.}
-\item{\dots}{Alternative (possibly simpler) way of specifying constraints.\cr Ignored if a chs.constraints object supplied.\cr\cr This (specifying constraints in dots) should not be used inside packages, because the use of dots may change.}
-}
-\value{
-Self-referencing functions of the form:
-
-function (x) \{\dots\}
-
-Where x is a numeric vector.
+\item{nth}{Nonnegative integer, which derivative to approximate.}
+\item{trim}{
+	Logical value, if true, remove nth control points, from both the beginning and end of the spline.\cr
+	For example, if nth=2, two control points are removed from each end.\cr\cr
+	This should be true (the default), if non-default constraints are used.}
+\item{\dots}{
+	Alternative (possibly simpler) way of specifying constraints.\cr
+	Ignored, if the constraints argument is set.\cr\cr
+	This (specifying constraints in dots) should not be used inside packages, because the use of dots may change.}
 }
 \details{
 These functions are constructors for function objects representing cubic Hermite splines, and their derivatives and indefinite integrals. 
@@ -49,16 +72,16 @@ The resulting function objects can be printed, plotted and evaluated (for x).\cr
 Alternatively, you can use the spline eval functions (with a .eval suffix), without using function objects, which may be more efficient, in some cases.
 
 \bold{chs}\cr
-Construct a chs object, for cubic Hermite splines.
+Construct a CHS object, for a cubic Hermite spline.
 
 \bold{chs.derivative}\cr
-Construct a chs.derivative object, for (exact) first derivatives of cubic Hermite splines.
+Construct a CHSD object, for an (exact) first derivative of a cubic Hermite spline.
 
 \bold{chs.integral}\cr
-Construct a chs.integral object, for indefinite integrals of cubic Hermite splines.
+Construct a CHSI object, for an (indefinite) integral of a cubic Hermite spline.
 
 \bold{approx.chs.derivative}\cr
-Construct an approx.chs.derivative object (which is also a chs object), for (new) cubic Hermite splines representing smooth approximations of first, second or higher derivatives of (initial) cubic Hermite splines.
+Construct an ACHSD object (which is also a CHS object), for a (new) cubic Hermite spline representing a smooth approximation of the first, second or higher derivatives of an (initial) cubic Hermite spline.
 
 Each of these objects requires two or more control points, and optionally their control slopes.
 
@@ -84,6 +107,11 @@ Also note that:\cr
 Refer to the help pages for \link{chs.constraints} and \link{chs.slopes} for more information on constraints and slopes.
 
 Note that the help page on constraints, also discusses the relationship between the spline's shape, and its slopes. And the help page on slopes also discusses the initialization method.
+}
+\value{
+Self-referencing S4-based function objects.
+
+Refer to \link{Runtime Function Objects}.
 }
 \references{
 Help pages from the stats package, for the splinefun, splinefunH and spline functions.
